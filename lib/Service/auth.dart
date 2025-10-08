@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:utshopadmin/Global/constant.dart';
 import 'package:utshopadmin/Global/global_value.dart';
+import 'package:utshopadmin/Route/app_page.dart';
 import 'package:utshopadmin/Service/api_caller.dart';
 import 'package:utshopadmin/Util/util.dart';
 class Auth {
@@ -14,9 +15,9 @@ class Auth {
     await Utils.saveStringWithKey(Constant.REFRESH_TOKEN, '');
     await Utils.saveStringWithKey(Constant.EMAIL, '');
     await Utils.saveStringWithKey(Constant.PASSWORD, '');
-    // if (Get.currentRoute != Routes.login) {
-    //   Get.offAllNamed(Routes.login);
-    // }
+    if (Get.currentRoute != Routes.login) {
+      Get.offAllNamed(Routes.login);
+    }
   }
 
   static login({String? email, String? password}) async {
@@ -64,7 +65,7 @@ class Auth {
 
         Utils.saveStringWithKey(Constant.EMAIL, email ?? emailPreferences);
         Utils.saveStringWithKey(Constant.PASSWORD, hashedPassword);
-        // Get.offAllNamed(Routes.dashboard);
+        Get.offAllNamed(Routes.dashboard);
       } else {
         backLogin(true);
       }

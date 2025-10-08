@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:utshopadmin/Global/app_color.dart';
+import 'package:utshopadmin/Route/app_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,8 +50,8 @@ class MyApp extends StatelessWidget {
               ),
             ),
             debugShowCheckedModeBanner: false,
-            // initialRoute: AppPage.initialRoute,
-            // getPages: AppPage.routes,
+            initialRoute: AppPage.initialRoute,
+            getPages: AppPage.routes,
           ),
     );
   }
