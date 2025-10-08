@@ -39,16 +39,16 @@ class MainScreen extends StatelessWidget {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black87),
+          icon: const Icon(Icons.menu, color: Colors.white),
           onPressed: () {
             controller.toggleDrawer();
           },
         ),
         title: const Text(
           'Trang chủ Admin',
-          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue,
         elevation: 2.0,
       ),
       body: SingleChildScrollView(

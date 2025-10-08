@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 class HomeController extends GetxController {
   final zoomDrawerController = ZoomDrawerController();
+    RxString email = ''.obs;
 
   void toggleDrawer() {
     zoomDrawerController.toggle?.call();
