@@ -204,28 +204,32 @@ class MenuScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(20.0),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
+                    const CircleAvatar(
                       radius: 40,
                       backgroundColor: Colors.white,
                       child: Icon(Icons.person, size: 50, color: Colors.blue),
                     ),
-                    SizedBox(height: 12),
-                    Text(
-                      'Admin Name',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 12),
+                    Obx(
+                      () => Text(
+                        controller.name.value,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    Text(
-                      'admin@utshop.com',
-                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                    Obx(
+                      () => Text(
+                        controller.email.value,
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                      ),
                     ),
                   ],
                 ),

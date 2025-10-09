@@ -8,6 +8,7 @@ abstract class Routes {
   static const home = _Paths.home;
   static const notify = _Paths.notify;
   static const profile = _Paths.profile;
+  static const changePassword = _Paths.changePassword;
 }
 
 abstract class _Paths {
@@ -18,4 +19,5 @@ abstract class _Paths {
   static const String home = '/home';
   static const String notify = '/notify';
   static const String profile = '/profile';
+  static const String changePassword = '/change-password';
 }

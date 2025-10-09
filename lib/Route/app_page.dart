@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:utshopadmin/View/Home/home.dart';
 import 'package:utshopadmin/View/Login/login.dart';
 import 'package:utshopadmin/View/Notify/notify.dart';
+import 'package:utshopadmin/View/Profile/ChangePassword/change_password.dart';
 import 'package:utshopadmin/View/Profile/profile.dart';
 import 'package:utshopadmin/View/dashboard.dart';
 import 'package:utshopadmin/View/splash.dart';
@@ -20,5 +21,6 @@ class AppPage {
     GetPage(name: Routes.home, page: () => Home()),
     GetPage(name: Routes.notify, page: () => Notify()),
     GetPage(name: Routes.profile, page: () => Profile()),
+    GetPage(name: Routes.changePassword, page: () => ChangePassword()),
   ];
 }

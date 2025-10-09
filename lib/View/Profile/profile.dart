@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:utshopadmin/Controller/Profile/profile_controller.dart';
 import 'package:utshopadmin/Global/app_color.dart';
+import 'package:utshopadmin/Route/app_page.dart';
 
 class Profile extends StatelessWidget {
   Profile({super.key});
@@ -105,14 +106,11 @@ class Profile extends StatelessWidget {
             child: Column(
               children: [
                 _buildMenuItem(
-                  title: 'Thông tin cá nhân',
-                  icon: Icons.person,
-                  onTap: () {},
-                ),
-                _buildMenuItem(
                   title: 'Đổi mật khẩu',
                   icon: Icons.lock,
-                  onTap: () {},
+                  onTap: () {
+                    Get.toNamed(Routes.changePassword);
+                  },
                 ),
               ],
             ),
