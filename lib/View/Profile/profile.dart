@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:utshopadmin/Component/custom_dialog.dart';
 import 'package:utshopadmin/Controller/Profile/profile_controller.dart';
 import 'package:utshopadmin/Global/app_color.dart';
 import 'package:utshopadmin/Route/app_page.dart';
+import 'package:utshopadmin/Service/auth.dart';
 
 class Profile extends StatelessWidget {
   Profile({super.key});
@@ -14,12 +16,8 @@ class Profile extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.background,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {},
-        ),
         title: const Text(
-          'Thông tin cá nhân',
+          'Thông tin tài khoản',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.blue,
@@ -110,6 +108,21 @@ class Profile extends StatelessWidget {
                   icon: Icons.lock,
                   onTap: () {
                     Get.toNamed(Routes.changePassword);
+                  },
+                ),
+                _buildMenuItem(
+                  title: 'Đăng xuất',
+                  icon: Icons.logout,
+                  showDivider: false,
+                  onTap: () {
+                    CustomDialog.show(
+                      context: context,
+                      color: AppColor.primary,
+                      title: "Đăng xuất",
+                      content:
+                          "Bạn có chắc muốn đăng xuất khỏi ứng dụng không?",
+                      onPressed: () => Auth.backLogin(true),
+                    );
                   },
                 ),
               ],

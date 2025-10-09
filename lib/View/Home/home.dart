@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
-import 'package:utshopadmin/Component/custom_dialog.dart';
 import 'package:utshopadmin/Controller/Home/home_controller.dart';
-import 'package:utshopadmin/Global/app_color.dart';
-import 'package:utshopadmin/Service/auth.dart';
 
 class Home extends StatelessWidget {
   Home({super.key});
@@ -56,11 +53,6 @@ class MainScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Tổng quan",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -141,6 +133,7 @@ class MainScreen extends StatelessWidget {
                 Expanded(child: SizedBox.shrink()),
               ],
             ),
+            SizedBox(height: 100),
           ],
         ),
       ),
@@ -181,11 +174,31 @@ class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key, required this.controller});
 
   final List<Map<String, dynamic>> menuItems = const [
-    {'icon': Icons.inventory_2_outlined, 'title': 'Quản lý sản phẩm'},
-    {'icon': Icons.people_alt_outlined, 'title': 'Quản lý người dùng'},
-    {'icon': Icons.receipt_long_outlined, 'title': 'Quản lý đơn hàng'},
-    {'icon': Icons.local_offer_outlined, 'title': 'Quản lý mã giảm giá'},
-    {'icon': Icons.bar_chart_outlined, 'title': 'Quản lý doanh thu'},
+    {
+      'icon': Icons.inventory_2_outlined,
+      'title': 'Quản lý sản phẩm',
+      'route': '/product-management',
+    },
+    {
+      'icon': Icons.people_alt_outlined,
+      'title': 'Quản lý người dùng',
+      'route': '/user-management',
+    },
+    {
+      'icon': Icons.receipt_long_outlined,
+      'title': 'Quản lý đơn hàng',
+      'route': '/order-management',
+    },
+    {
+      'icon': Icons.local_offer_outlined,
+      'title': 'Quản lý mã giảm giá',
+      'route': '/voucher-management',
+    },
+    {
+      'icon': Icons.bar_chart_outlined,
+      'title': 'Quản lý doanh thu',
+      'route': '/revenue-management',
+    },
   ];
 
   @override
@@ -241,13 +254,18 @@ class MenuScreen extends StatelessWidget {
                   itemCount: menuItems.length,
                   itemBuilder: (context, index) {
                     final item = menuItems[index];
+                    final String routeName = item['route'];
                     return ListTile(
                       leading: Icon(item['icon'], color: Colors.white),
                       title: Text(
                         item['title'],
                         style: const TextStyle(color: Colors.white),
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        if (routeName.isNotEmpty) {
+                          Get.toNamed(routeName);
+                        }
+                      },
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -256,23 +274,6 @@ class MenuScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                 ),
               ),
-              ListTile(
-                leading: const Icon(Icons.logout, color: Colors.white),
-                title: const Text(
-                  'Đăng xuất',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  CustomDialog.show(
-                    context: context,
-                    color: AppColor.primary,
-                    title: "Đăng xuất",
-                    content: "Bạn có chắc muốn đăng xuất khỏi ứng dụng không?",
-                    onPressed: () => Auth.backLogin(true),
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
             ],
           ),
         ),
