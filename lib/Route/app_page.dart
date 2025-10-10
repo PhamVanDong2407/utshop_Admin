@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:utshopadmin/View/Home/Menu/OrderManagement/order_management.dart';
+import 'package:utshopadmin/View/Home/Menu/ProductManagement/CreateProduct/create_product.dart';
+import 'package:utshopadmin/View/Home/Menu/ProductManagement/EditProduct/edit_product.dart';
 import 'package:utshopadmin/View/Home/Menu/ProductManagement/product_management.dart';
 import 'package:utshopadmin/View/Home/Menu/ReveuneManagement/reveune_management.dart';
 import 'package:utshopadmin/View/Home/Menu/UserManagement/user_management.dart';
@@ -25,6 +27,8 @@ class AppPage {
     GetPage(name: Routes.dashboard, page: () => Dashboard()),
     GetPage(name: Routes.home, page: () => Home()),
     GetPage(name: Routes.productManagement, page: () => ProductManagement()),
+    GetPage(name: Routes.createProduct, page: () => CreateProduct()),
+    GetPage(name: Routes.editProduct, page: () => EditProduct()),
     GetPage(name: Routes.userManagement, page: () => UserManagement()),
     GetPage(name: Routes.orderManagement, page: () => OrderManagement()),
     GetPage(name: Routes.voucherManagement, page: () => VoucherManagement()),

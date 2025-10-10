@@ -7,6 +7,8 @@ abstract class Routes {
   static const dashboard = _Paths.dashboard;
   static const home = _Paths.home;
   static const productManagement = _Paths.productManagement;
+  static const createProduct = _Paths.createProduct;
+  static const editProduct = _Paths.editProduct;
   static const userManagement = _Paths.userManagement;
   static const orderManagement = _Paths.orderManagement;
   static const voucherManagement = _Paths.voucherManagement;
@@ -23,6 +25,8 @@ abstract class _Paths {
   static const String dashboard = '/dashboard';
   static const String home = '/home';
   static const String productManagement = '/product-management';
+  static const String createProduct = '/create-product';
+  static const String editProduct = '/edit-product';
   static const String userManagement = '/user-management';
   static const String orderManagement = '/order-management';
   static const String voucherManagement = '/voucher-management';

@@ -112,6 +112,19 @@ class Utils {
     return file;
   }
 
+  static Future getMultipleImagePicker() async {
+    ImagePicker picker = ImagePicker();
+    List<File>? files;
+    try {
+      await picker.pickMultiImage().then((value) {
+        files = value.map((e) => File(e.path)).toList();
+      });
+    } catch (e) {
+      return null;
+    }
+    return files;
+  }
+
   static void showSnackBar({
     required String title,
     required String message,

@@ -1,3 +1,5 @@
 import 'package:get/get.dart';
 
-class ProductManagementController extends GetxController{}
+class ProductManagementController extends GetxController{
+
+}
