@@ -294,20 +294,6 @@ class UserManagement extends StatelessWidget {
           const SizedBox(height: 80),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        backgroundColor: AppColor.primary,
-        foregroundColor: AppColor.white,
-        label: const Text(
-          'Thêm mới',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        icon: const Icon(Icons.add),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        elevation: 8,
-      ),
     );
   }
 }
