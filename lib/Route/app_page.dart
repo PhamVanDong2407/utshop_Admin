@@ -5,6 +5,8 @@ import 'package:utshopadmin/View/Home/Menu/ProductManagement/EditProduct/edit_pr
 import 'package:utshopadmin/View/Home/Menu/ProductManagement/product_management.dart';
 import 'package:utshopadmin/View/Home/Menu/ReveuneManagement/reveune_management.dart';
 import 'package:utshopadmin/View/Home/Menu/UserManagement/user_management.dart';
+import 'package:utshopadmin/View/Home/Menu/VoucherManagement/CreateVoucher/create_voucher.dart';
+import 'package:utshopadmin/View/Home/Menu/VoucherManagement/EditVoucher/edit_voucher.dart';
 import 'package:utshopadmin/View/Home/Menu/VoucherManagement/voucher_management.dart';
 import 'package:utshopadmin/View/Home/home.dart';
 import 'package:utshopadmin/View/Login/login.dart';
@@ -32,6 +34,8 @@ class AppPage {
     GetPage(name: Routes.userManagement, page: () => UserManagement()),
     GetPage(name: Routes.orderManagement, page: () => OrderManagement()),
     GetPage(name: Routes.voucherManagement, page: () => VoucherManagement()),
+    GetPage(name: Routes.createVoucher, page: () => CreateVoucher()),
+    GetPage(name: Routes.editVoucher, page: () => EditVoucher()),
     GetPage(name: Routes.revenueManagement, page: () => ReveuneManagement()),
     GetPage(name: Routes.notify, page: () => Notify()),
     GetPage(name: Routes.profile, page: () => Profile()),
