@@ -65,7 +65,7 @@ class Auth {
 
         Utils.saveStringWithKey(Constant.EMAIL, email ?? emailPreferences);
         Utils.saveStringWithKey(Constant.PASSWORD, hashedPassword);
-        Get.offAllNamed(Routes.dashboard);
+        Get.offAllNamed(Routes.home);
       } else {
         backLogin(true);
       }

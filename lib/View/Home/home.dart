@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
+import 'package:utshopadmin/Component/custom_dialog.dart';
 import 'package:utshopadmin/Controller/Home/home_controller.dart';
+import 'package:utshopadmin/Global/app_color.dart';
+import 'package:utshopadmin/Route/app_page.dart';
+import 'package:utshopadmin/Service/auth.dart';
 
 class Home extends StatelessWidget {
   Home({super.key});
@@ -47,6 +51,14 @@ class MainScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.blue,
         elevation: 2.0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.white),
+            onPressed: () {
+              Get.toNamed(Routes.notify);
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -199,6 +211,11 @@ class MenuScreen extends StatelessWidget {
       'title': 'Quản lý doanh thu',
       'route': '/revenue-management',
     },
+    {
+      'icon': Icons.person_outline,
+      'title': 'Hồ sơ cá nhân',
+      'route': '/profile',
+    },
   ];
 
   @override
@@ -272,6 +289,28 @@ class MenuScreen extends StatelessWidget {
                     );
                   },
                   padding: const EdgeInsets.symmetric(horizontal: 10),
+                ),
+              ),
+
+              const Divider(color: Colors.white30, indent: 20, endIndent: 20),
+              ListTile(
+                leading: const Icon(Icons.logout, color: Colors.white),
+                title: const Text(
+                  'Đăng xuất',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  CustomDialog.show(
+                    context: context,
+                    color: AppColor.primary,
+                    title: "Đăng xuất",
+                    content: "Bạn có chắc muốn đăng xuất khỏi ứng dụng không?",
+                    onPressed: () => Auth.backLogin(true),
+                  );
+                },
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
                 ),
               ),
             ],
