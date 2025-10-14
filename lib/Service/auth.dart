@@ -5,6 +5,7 @@ import 'package:utshopadmin/Global/global_value.dart';
 import 'package:utshopadmin/Route/app_page.dart';
 import 'package:utshopadmin/Service/api_caller.dart';
 import 'package:utshopadmin/Util/util.dart';
+
 class Auth {
   static backLogin(bool isRun) async {
     if (!isRun) {
@@ -44,28 +45,43 @@ class Auth {
         body: param,
       );
       if (response != null) {
-        GlobalValue.getInstance().setToken(
-          'Bearer ${response['tokens']['access_token']}',
-        );
+        int? permissionId = response['data']['permission'];
 
-        Utils.saveStringWithKey(
-          Constant.ACCESS_TOKEN,
-          response['tokens']['access_token'],
-        );
-        Utils.saveStringWithKey(
-          Constant.REFRESH_TOKEN,
-          response['tokens']['refresh_token'],
-        );
+        // Chỉ cho phép người dùng có permission_id là 2 (Admin) vào app
+        if (permissionId == 2) {
+          GlobalValue.getInstance().setToken(
+            'Bearer ${response['tokens']['access_token']}',
+          );
 
-        Utils.saveStringWithKey(Constant.NAME, response['data']['name'] ?? '');
-        Utils.saveStringWithKey(
-          Constant.AVATAR,
-          response['data']['avatar'] ?? '',
-        );
+          Utils.saveStringWithKey(
+            Constant.ACCESS_TOKEN,
+            response['tokens']['access_token'],
+          );
+          Utils.saveStringWithKey(
+            Constant.REFRESH_TOKEN,
+            response['tokens']['refresh_token'],
+          );
 
-        Utils.saveStringWithKey(Constant.EMAIL, email ?? emailPreferences);
-        Utils.saveStringWithKey(Constant.PASSWORD, hashedPassword);
-        Get.offAllNamed(Routes.home);
+          Utils.saveStringWithKey(
+            Constant.NAME,
+            response['data']['name'] ?? '',
+          );
+          Utils.saveStringWithKey(
+            Constant.AVATAR,
+            response['data']['avatar'] ?? '',
+          );
+
+          Utils.saveStringWithKey(Constant.EMAIL, email ?? emailPreferences);
+          Utils.saveStringWithKey(Constant.PASSWORD, hashedPassword);
+
+          Get.offAllNamed(Routes.home);
+        } else {
+          Utils.showSnackBar(
+            title: 'Lỗi',
+            message: 'Tài khoản của bạn không có quyền truy cập.',
+          );
+          backLogin(true);
+        }
       } else {
         backLogin(true);
       }
