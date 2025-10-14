@@ -367,27 +367,7 @@ class DetailOrder extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Trạng thái: ',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColor.grey,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Đang xử lý',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColor.primary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+
                                 SizedBox(height: 4),
                                 Wrap(
                                   spacing: 4,
@@ -548,8 +528,6 @@ class DetailOrder extends StatelessWidget {
                 ),
               ),
             ),
-
-            SizedBox(height: 16),
 
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
