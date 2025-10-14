@@ -11,6 +11,7 @@ abstract class Routes {
   static const editProduct = _Paths.editProduct;
   static const userManagement = _Paths.userManagement;
   static const orderManagement = _Paths.orderManagement;
+  static const detailOrder = _Paths.detailOrder;
   static const voucherManagement = _Paths.voucherManagement;
   static const createVoucher = _Paths.createVoucher;
   static const editVoucher = _Paths.editVoucher;
@@ -31,6 +32,7 @@ abstract class _Paths {
   static const String editProduct = '/edit-product';
   static const String userManagement = '/user-management';
   static const String orderManagement = '/order-management';
+  static const String detailOrder = '/detail-order';
   static const String voucherManagement = '/voucher-management';
   static const String createVoucher = '/create-voucher';
   static const String editVoucher = '/edit-voucher';
