@@ -42,4 +42,16 @@ class ProductManagementController extends GetxController {
   Future<void> refreshData() async {
     await getProductList();
   }
+
+  Future<void> removeProduct(String uuid) async {
+    try {
+      var response = await APICaller.getInstance().delete('v1/product/$uuid');
+      debugPrint('remove response: $response');
+
+      // Sau khi xóa xong thì load lại danh sách
+      await getProductList();
+    } catch (e) {
+      debugPrint('Error removing product: $e');
+    }
+  }
 }

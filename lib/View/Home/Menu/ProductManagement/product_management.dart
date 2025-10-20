@@ -168,9 +168,18 @@ class ProductManagement extends StatelessWidget {
                                 title: "Xóa sản phẩm",
                                 content:
                                     "Bạn có chắc muốn xóa sản phẩm này không?",
-                                onPressed: () {},
+                                onPressed: () async {
+                                  final uuid =
+                                      controller.productList[index].uuid ?? '';
+                                  if (uuid.isNotEmpty) {
+                                    await controller.removeProduct(uuid);
+                                    Get.back();
+                                  }
+                                },
                               );
                             },
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
                           ),
                         ],
                       ),
