@@ -143,47 +143,47 @@ class EditProduct extends StatelessWidget {
                 },
               ),
 
-              const SizedBox(height: 20),
+              // const SizedBox(height: 20),
 
-              _labelForm(label: "Danh mục", isRequired: true),
-              const SizedBox(height: 8),
-              Obx(
-                () => DropdownButtonFormField<String>(
-                  value: controller.selectedCategory.value,
-                  decoration: _customInputDecoration(
-                    hintText: 'Chọn danh mục sản phẩm',
-                    prefixIcon: Icons.category_outlined,
-                  ),
-                  icon: Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: AppColor.primary,
-                    size: 24,
-                  ),
-                  isExpanded: true,
-                  onChanged: controller.updateSelectedCategory,
-                  items:
-                      controller.categories.map<DropdownMenuItem<String>>((
-                        String value,
-                      ) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                              color: AppColor.text1,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Vui lòng chọn một danh mục';
-                    }
-                    return null;
-                  },
-                ),
-              ),
+              // _labelForm(label: "Danh mục", isRequired: true),
+              // const SizedBox(height: 8),
+              // Obx(
+              //   () => DropdownButtonFormField<String>(
+              //     value: controller.selectedCategory.value,
+              //     decoration: _customInputDecoration(
+              //       hintText: 'Chọn danh mục sản phẩm',
+              //       prefixIcon: Icons.category_outlined,
+              //     ),
+              //     icon: Icon(
+              //       Icons.keyboard_arrow_down_rounded,
+              //       color: AppColor.primary,
+              //       size: 24,
+              //     ),
+              //     isExpanded: true,
+              //     onChanged: controller.updateSelectedCategory,
+              //     items:
+              //         controller.categories.map<DropdownMenuItem<String>>((
+              //           String value,
+              //         ) {
+              //           return DropdownMenuItem<String>(
+              //             value: value,
+              //             child: Text(
+              //               value,
+              //               style: TextStyle(
+              //                 color: AppColor.text1,
+              //                 fontWeight: FontWeight.w500,
+              //               ),
+              //             ),
+              //           );
+              //         }).toList(),
+              //     validator: (value) {
+              //       if (value == null || value.isEmpty) {
+              //         return 'Vui lòng chọn một danh mục';
+              //       }
+              //       return null;
+              //     },
+              //   ),
+              // ),
 
               const SizedBox(height: 24),
 
@@ -372,6 +372,329 @@ class EditProduct extends StatelessWidget {
                     ],
                   ),
                 ),
+              ),
+
+              SizedBox(height: 20),
+
+              _labelForm(label: "Phiên bản sản phẩm", isRequired: true),
+              const SizedBox(height: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...[0].map(
+                    (index) => Card(
+                      color: AppColor.white,
+                      margin: const EdgeInsets.only(bottom: 8),
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Phiên bản ${index + 1}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColor.primary,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColor.red.withAlpha(128),
+                                    ),
+                                    child: Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                      size: 14,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _labelForm(
+                                        label: "Size",
+                                        isRequired: true,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: DropdownButtonFormField<String>(
+                                          value: null,
+                                          decoration: _customInputDecoration(
+                                            hintText: 'M, L, XL',
+                                            prefixIcon:
+                                                Icons.straighten_outlined,
+                                          ).copyWith(
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  vertical: 10,
+                                                  horizontal: 12,
+                                                ),
+                                          ),
+                                          isExpanded: true,
+                                          onChanged: (value) => {},
+                                          items:
+                                              [
+                                                'M',
+                                                'L',
+                                                'XL',
+                                              ].map<DropdownMenuItem<String>>((
+                                                String value,
+                                              ) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(value),
+                                                );
+                                              }).toList(),
+                                          validator:
+                                              (value) =>
+                                                  (value == null ||
+                                                          value.isEmpty)
+                                                      ? 'Chọn size'
+                                                      : null,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _labelForm(
+                                        label: "Màu sắc",
+                                        isRequired: true,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: DropdownButtonFormField<String>(
+                                          value: null,
+                                          decoration: _customInputDecoration(
+                                            hintText: 'Đỏ, Đen, Trắng',
+                                            prefixIcon: Icons.palette_outlined,
+                                          ).copyWith(
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  vertical: 10,
+                                                  horizontal: 12,
+                                                ),
+                                          ),
+                                          isExpanded: true,
+                                          onChanged: (value) => {},
+                                          items:
+                                              [
+                                                'Đỏ',
+                                                'Đen',
+                                                'Trắng',
+                                              ].map<DropdownMenuItem<String>>((
+                                                String value,
+                                              ) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(value),
+                                                );
+                                              }).toList(),
+                                          validator:
+                                              (value) =>
+                                                  (value == null ||
+                                                          value.isEmpty)
+                                                      ? 'Chọn màu'
+                                                      : null,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _labelForm(
+                                        label: "Giới tính",
+                                        isRequired: true,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: DropdownButtonFormField<String>(
+                                          value: null,
+                                          decoration: _customInputDecoration(
+                                            hintText: 'Nam, Nữ',
+                                            prefixIcon: Icons.people_outlined,
+                                          ).copyWith(
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  vertical: 10,
+                                                  horizontal: 12,
+                                                ),
+                                          ),
+                                          isExpanded: true,
+                                          onChanged: (value) => {},
+                                          items:
+                                              [
+                                                'Nam',
+                                                'Nữ',
+                                              ].map<DropdownMenuItem<String>>((
+                                                String value,
+                                              ) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(value),
+                                                );
+                                              }).toList(),
+                                          validator:
+                                              (value) =>
+                                                  (value == null ||
+                                                          value.isEmpty)
+                                                      ? 'Chọn giới tính'
+                                                      : null,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _labelForm(
+                                        label: "Loại",
+                                        isRequired: true,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: DropdownButtonFormField<String>(
+                                          value: null,
+                                          decoration: _customInputDecoration(
+                                            hintText: 'Quần, Áo',
+                                            prefixIcon:
+                                                Icons.inventory_2_outlined,
+                                          ).copyWith(
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  vertical: 10,
+                                                  horizontal: 12,
+                                                ),
+                                          ),
+                                          isExpanded: true,
+                                          onChanged: (value) {},
+                                          items:
+                                              [
+                                                'Quần',
+                                                'Áo',
+                                              ].map<DropdownMenuItem<String>>((
+                                                String value,
+                                              ) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(value),
+                                                );
+                                              }).toList(),
+                                          validator:
+                                              (value) =>
+                                                  (value == null ||
+                                                          value.isEmpty)
+                                                      ? 'Chọn loại'
+                                                      : null,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _labelForm(label: "Số lượng", isRequired: true),
+                                const SizedBox(height: 4),
+                                TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: _customInputDecoration(
+                                    hintText: 'Nhập số lượng',
+                                    prefixIcon:
+                                        Icons.add_shopping_cart_outlined,
+                                  ).copyWith(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                      horizontal: 12,
+                                    ),
+                                  ),
+                                  onChanged: (value) {},
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Nhập số lượng';
+                                    }
+                                    if (int.tryParse(value) == null ||
+                                        int.parse(value) <= 0) {
+                                      return 'Số > 0';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {},
+                      icon: Icon(Icons.add, size: 18, color: Colors.white),
+                      label: Text(
+                        'Thêm phiên bản',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 30),
