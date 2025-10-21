@@ -1,14 +1,46 @@
 import 'dart:io';
-
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:utshopadmin/Model/Product.dart';
+import 'package:utshopadmin/Service/api_caller.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:utshopadmin/Global/constant.dart';
 
 class EditProductController extends GetxController {
-  final List<String> categories = ['Nam', 'Nữ', 'Quần', 'Áo'];
   RxBool isPopular = false.obs;
   RxBool isShowMore = true.obs;
   RxList<File> imageFiles = RxList<File>([]);
   Rx<String?> selectedCategory = Rx<String?>(null);
   RxBool isImageValid = true.obs;
+  RxBool isEditing = false.obs;
+  RxList<Products> products = <Products>[].obs;
+  RxList<Variants> variants = <Variants>[].obs;
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  final Map<int, TextEditingController> stockControllers = {};
+
+  final String baseUrl = Constant.BASE_URL_IMAGE;
+
+  late String uuid;
+
+  @override
+  void onInit() {
+    super.onInit();
+    uuid = Get.arguments['uuid'] ?? '';
+    getProductDetails();
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    descriptionController.dispose();
+    priceController.dispose();
+    stockControllers.forEach((key, controller) => controller.dispose());
+    super.onClose();
+  }
 
   void updateSelectedCategory(String? newValue) {
     selectedCategory.value = newValue;
@@ -21,5 +53,281 @@ class EditProductController extends GetxController {
     }
     isImageValid.value = true;
     return true;
+  }
+
+  Future<File> _downloadImage(String url) async {
+    final response = await http.get(Uri.parse('$baseUrl$url'));
+    final bytes = response.bodyBytes;
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/${url.split('/').last}');
+    await file.writeAsBytes(bytes);
+    return file;
+  }
+
+  Future<void> getProductDetails() async {
+    isEditing.value = true;
+    try {
+      var response = await APICaller.getInstance().get('v1/product/$uuid');
+      if (response != null &&
+          response['data'] != null &&
+          response['data']['product'] != null) {
+        var productData = response['data']['product'];
+        var product = Products.fromJson(productData);
+        products.clear();
+        products.add(product);
+
+        // Gán dữ liệu vào các trường
+        nameController.text = product.name ?? '';
+        descriptionController.text = product.description ?? '';
+        priceController.text = product.price ?? '';
+        isPopular.value = product.isPopular == 1;
+        selectedCategory.value = product.categoryUuid;
+
+        // Xử lý hình ảnh
+        imageFiles.clear();
+        if (product.images != null) {
+          for (var image in product.images!) {
+            if (image.url != null && image.url!.isNotEmpty) {
+              try {
+                final file = await _downloadImage(image.url!);
+                imageFiles.add(file);
+              } catch (e) {
+                debugPrint('Error downloading image: $e');
+              }
+            }
+          }
+        }
+
+        // Xử lý biến thể
+        variants.clear();
+        if (product.variants != null) {
+          variants.addAll(product.variants!);
+          // Khởi tạo TextEditingController cho mỗi biến thể
+          for (var i = 0; i < variants.length; i++) {
+            stockControllers[i] = TextEditingController(
+              text: variants[i].stock?.toString() ?? '',
+            );
+          }
+        }
+      } else {
+        debugPrint('Response or product data is null');
+      }
+    } catch (e) {
+      debugPrint("Error fetching product details: $e");
+    } finally {
+      isEditing.value = false;
+    }
+  }
+
+  String mapSizeToString(int? size) {
+    switch (size) {
+      case 0:
+        return 'M';
+      case 1:
+        return 'L';
+      case 2:
+        return 'XL';
+      default:
+        return 'M';
+    }
+  }
+
+  int mapSize(String? size) {
+    switch (size) {
+      case 'M':
+        return 0;
+      case 'L':
+        return 1;
+      case 'XL':
+        return 2;
+      default:
+        return 0;
+    }
+  }
+
+  String mapGenderToString(int? gender) {
+    switch (gender) {
+      case 0:
+        return 'Nam';
+      case 1:
+        return 'Nữ';
+      default:
+        return 'Nam';
+    }
+  }
+
+  int mapGender(String? gender) {
+    switch (gender) {
+      case 'Nam':
+        return 0;
+      case 'Nữ':
+        return 1;
+      default:
+        return 0;
+    }
+  }
+
+  String mapColorToString(int? color) {
+    switch (color) {
+      case 0:
+        return 'Trắng';
+      case 1:
+        return 'Đỏ';
+      case 2:
+        return 'Đen';
+      default:
+        return 'Trắng';
+    }
+  }
+
+  int mapColor(String? color) {
+    switch (color) {
+      case 'Trắng':
+        return 0;
+      case 'Đỏ':
+        return 1;
+      case 'Đen':
+        return 2;
+      default:
+        return 0;
+    }
+  }
+
+  String mapTypeToString(int? type) {
+    switch (type) {
+      case 0:
+        return 'Quần';
+      case 1:
+        return 'Áo';
+      default:
+        return 'Quần';
+    }
+  }
+
+  int mapType(String? type) {
+    switch (type) {
+      case 'Quần':
+        return 0;
+      case 'Áo':
+        return 1;
+      default:
+        return 0;
+    }
+  }
+
+  void updateVariantSize(int index, String? value) {
+    if (index >= 0 && index < variants.length && value != null) {
+      variants[index] = Variants(
+        uuid: variants[index].uuid,
+        productUuid: variants[index].productUuid,
+        size: mapSize(value),
+        gender: variants[index].gender,
+        color: variants[index].color,
+        type: variants[index].type,
+        stock: variants[index].stock,
+        price: variants[index].price,
+      );
+      variants.refresh();
+    }
+  }
+
+  void updateVariantColor(int index, String? value) {
+    if (index >= 0 && index < variants.length && value != null) {
+      variants[index] = Variants(
+        uuid: variants[index].uuid,
+        productUuid: variants[index].productUuid,
+        size: variants[index].size,
+        gender: variants[index].gender,
+        color: mapColor(value),
+        type: variants[index].type,
+        stock: variants[index].stock,
+        price: variants[index].price,
+      );
+      variants.refresh();
+    }
+  }
+
+  void updateVariantGender(int index, String? value) {
+    if (index >= 0 && index < variants.length && value != null) {
+      variants[index] = Variants(
+        uuid: variants[index].uuid,
+        productUuid: variants[index].productUuid,
+        size: variants[index].size,
+        gender: mapGender(value),
+        color: variants[index].color,
+        type: variants[index].type,
+        stock: variants[index].stock,
+        price: variants[index].price,
+      );
+      variants.refresh();
+    }
+  }
+
+  void updateVariantType(int index, String? value) {
+    if (index >= 0 && index < variants.length && value != null) {
+      variants[index] = Variants(
+        uuid: variants[index].uuid,
+        productUuid: variants[index].productUuid,
+        size: variants[index].size,
+        gender: variants[index].gender,
+        color: variants[index].color,
+        type: mapType(value),
+        stock: variants[index].stock,
+        price: variants[index].price,
+      );
+      variants.refresh();
+    }
+  }
+
+  void updateVariantStock(int index, String? value) {
+    if (index >= 0 && index < variants.length && value != null) {
+      variants[index] = Variants(
+        uuid: variants[index].uuid,
+        productUuid: variants[index].productUuid,
+        size: variants[index].size,
+        gender: variants[index].gender,
+        color: variants[index].color,
+        type: variants[index].type,
+        stock: int.tryParse(value) ?? 0,
+        price: variants[index].price,
+      );
+      variants.refresh();
+    }
+  }
+
+  void removeVariant(int index) {
+    if (index >= 0 && index < variants.length) {
+      variants.removeAt(index);
+      stockControllers[index]?.dispose();
+      stockControllers.remove(index);
+      // Cập nhật lại key của stockControllers
+      final newControllers = <int, TextEditingController>{};
+      for (var i = 0; i < variants.length; i++) {
+        newControllers[i] =
+            stockControllers[i + 1] ??
+            TextEditingController(text: variants[i].stock?.toString() ?? '');
+      }
+      stockControllers.clear();
+      stockControllers.addAll(newControllers);
+      variants.refresh();
+    }
+  }
+
+  void addVariant() {
+    final newVariant = Variants(
+      uuid: '',
+      productUuid: uuid,
+      size: 0,
+      gender: 0,
+      color: 0,
+      type: 0,
+      stock: 0,
+      price: '0',
+    );
+    variants.add(newVariant);
+    stockControllers[variants.length - 1] = TextEditingController(
+      text: newVariant.stock?.toString() ?? '',
+    );
+    variants.refresh();
   }
 }

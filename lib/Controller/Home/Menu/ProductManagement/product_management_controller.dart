@@ -18,7 +18,6 @@ class ProductManagementController extends GetxController {
   Future<void> getProductList() async {
     try {
       var response = await APICaller.getInstance().get('v1/product');
-      debugPrint('response: $response');
 
       if (response != null && response['data'] != null) {
         List<dynamic> data = response['data'] as List<dynamic>;
