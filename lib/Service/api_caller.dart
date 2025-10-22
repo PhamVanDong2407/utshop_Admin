@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:utshopadmin/Global/constant.dart';
@@ -10,6 +11,8 @@ import 'package:utshopadmin/Service/auth.dart';
 import 'package:utshopadmin/Util/util.dart';
 
 class APICaller {
+  final String BASE_URL = dotenv.env['API_URL'] ?? '';
+
   static APICaller? _apiCaller = APICaller();
   final String _baseUrl = dotenv.env['API_URL'] ?? '';
   static Map<String, String> requestHeaders = {
@@ -151,6 +154,60 @@ class APICaller {
         .timeout(timeout, onTimeout: onTimeout);
 
     return handleResponse(response);
+  }
+
+  Future<dynamic> uploadMultipartFiles({
+    required String endpoint,
+    required List<File> files,
+    Map<String, String> fields = const {},
+  }) async {
+    Map<String, String> requestHeaders = {
+      'Authorization': GlobalValue.getInstance().getToken(),
+    };
+
+    final uri = Uri.parse(BASE_URL + endpoint);
+    final request = http.MultipartRequest('POST', uri);
+
+    for (var file in files) {
+      request.files.add(await http.MultipartFile.fromPath('files', file.path));
+    }
+
+    request.fields.addAll(fields);
+    request.headers.addAll(requestHeaders);
+
+    try {
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 401) {
+        Auth.backLogin(true);
+        Utils.showSnackBar(
+          title: 'Thông báo',
+          message: 'Đã hết phiên đăng nhập',
+        );
+        return null;
+      }
+
+      if (response.statusCode != 200) {
+        Utils.showSnackBar(title: 'Lỗi', message: response.body);
+        return null;
+      }
+
+      if (responseData['code'] != 200) {
+        Utils.showSnackBar(
+          title: 'Thông báo',
+          message: responseData['message'] ?? "Upload thất bại!",
+        );
+        return null;
+      }
+
+      return responseData;
+    } catch (e) {
+      debugPrint("❌ Lỗi uploadMultipartFiles: $e");
+      return null;
+    }
   }
 
   Future<dynamic> put(String endpoint, {dynamic body}) async {
