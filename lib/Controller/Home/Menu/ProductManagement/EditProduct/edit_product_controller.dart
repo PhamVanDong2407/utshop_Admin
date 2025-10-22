@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:utshopadmin/Global/app_color.dart';
+import 'package:utshopadmin/Model/Categories.dart';
 import 'package:utshopadmin/Model/Product.dart';
 import 'package:utshopadmin/Service/api_caller.dart';
 import 'package:http/http.dart' as http;
@@ -25,12 +27,14 @@ class EditProductController extends GetxController {
   final String baseUrl = Constant.BASE_URL_IMAGE;
 
   late String uuid;
+  RxList<Categories> categories = <Categories>[].obs;
 
   @override
   void onInit() {
     super.onInit();
     uuid = Get.arguments['uuid'] ?? '';
     getProductDetails();
+    getCategories();
   }
 
   @override
@@ -62,6 +66,19 @@ class EditProductController extends GetxController {
     final file = File('${dir.path}/${url.split('/').last}');
     await file.writeAsBytes(bytes);
     return file;
+  }
+
+  Future<void> getCategories() async {
+    var res = await APICaller.getInstance().get('v1/category');
+
+    if (res == null || res['error']?['code'] != 0) {
+      var fetchedCategories =
+          (res['data'] as List)
+              .map((catJson) => Categories.fromJson(catJson))
+              .toList();
+      categories.assignAll(fetchedCategories);
+      return;
+    }
   }
 
   Future<void> getProductDetails() async {
@@ -329,5 +346,117 @@ class EditProductController extends GetxController {
       text: newVariant.stock?.toString() ?? '',
     );
     variants.refresh();
+  }
+
+  Future<void> editProduct() async {
+    try {
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+
+      List<String> uploadedUrls = [];
+      if (imageFiles.isNotEmpty) {
+        var uploadRes = await APICaller.getInstance().uploadMultipartFiles(
+          endpoint: 'v1/file/multiple-upload',
+          files: imageFiles,
+        );
+
+        if (uploadRes == null || uploadRes['code'] != 200) {
+          Get.back();
+          Get.snackbar(
+            'Lỗi',
+            uploadRes?['message'] ?? 'Upload ảnh thất bại!',
+            backgroundColor: AppColor.red,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 3),
+          );
+          return;
+        }
+
+        uploadedUrls = List<String>.from(uploadRes['files']);
+      }
+
+      List<Images> newImages = [];
+      for (int i = 0; i < uploadedUrls.length; i++) {
+        newImages.add(
+          Images(
+            uuid: '',
+            productUuid: '',
+            url: uploadedUrls[i],
+            isMain: i == 0 ? 1 : 0,
+          ),
+        );
+      }
+
+      // Chuẩn bị danh sách variants
+      final productVariants =
+          variants.map((v) {
+            return Variants(
+              uuid: v.uuid ?? '',
+              productUuid: v.productUuid ?? '',
+              size: v.size ?? 0,
+              gender: v.gender ?? 0,
+              color: v.color ?? 0,
+              type: v.type ?? 0,
+              stock: v.stock ?? 0,
+              price: v.price ?? '0',
+            );
+          }).toList();
+
+      final updatedProduct = Products(
+        uuid: uuid,
+        categoryUuid: selectedCategory.value ?? '',
+        name: nameController.text.trim(),
+        description:
+            descriptionController.text.trim().isEmpty
+                ? null
+                : descriptionController.text.trim(),
+        price: priceController.text.trim(),
+        isPopular: isPopular.value ? 1 : 0,
+        images: newImages,
+        variants: productVariants,
+      );
+
+      final jsonBody = updatedProduct.toJson();
+      final res = await APICaller.getInstance().put(
+        'v1/product/$uuid',
+        body: jsonBody,
+      );
+
+      Get.back();
+
+      if (res != null && res['code'] == 200) {
+        Get.back();
+        Get.snackbar(
+          'Thành công',
+          res['message'] ?? 'Cập nhật sản phẩm thành công!',
+          backgroundColor: AppColor.primary,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+      } else {
+        final errorMsg =
+            res?['message'] ??
+            res?['error']?['message'] ??
+            'Cập nhật sản phẩm thất bại!';
+        Get.snackbar(
+          'Lỗi',
+          errorMsg,
+          backgroundColor: AppColor.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      Get.back();
+      Get.snackbar(
+        'Lỗi',
+        'Đã xảy ra lỗi khi cập nhật: $e',
+        backgroundColor: AppColor.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+    }
   }
 }

@@ -164,6 +164,43 @@ class EditProduct extends StatelessWidget {
                 ),
               ),
 
+              const SizedBox(height: 20),
+              _labelForm(label: "Danh mục sản phẩm", isRequired: true),
+              const SizedBox(height: 8),
+              Obx(
+                () => DropdownButtonFormField<String>(
+                  value: controller.selectedCategory.value,
+                  decoration: _customInputDecoration(
+                    hintText: 'Chọn danh mục sản phẩm',
+                    prefixIcon: Icons.category_outlined,
+                  ).copyWith(
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 12,
+                    ),
+                  ),
+                  isExpanded: true,
+                  onChanged: (value) {
+                    controller.selectedCategory.value = value;
+                  },
+                  items:
+                      controller.categories.map<DropdownMenuItem<String>>((
+                        category,
+                      ) {
+                        return DropdownMenuItem<String>(
+                          value: category.uuid,
+                          child: Text(category.name ?? ''),
+                        );
+                      }).toList(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng chọn danh mục sản phẩm';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+
               const SizedBox(height: 24),
 
               Row(
@@ -808,23 +845,16 @@ class EditProduct extends StatelessWidget {
                                 _formKey.currentState?.validate() ?? false;
                             bool isImageValid =
                                 controller.validateImageSelection();
+                            controller.editProduct();
 
                             if (isFormValid && isImageValid) {
-                              Get.snackbar(
-                                "Thành công",
-                                "Sẵn sàng gửi dữ liệu sản phẩm!",
-                                backgroundColor: AppColor.primary,
-                                colorText: Colors.white,
-                                duration: const Duration(seconds: 2),
+                              debugPrint(
+                                "Thành công: Sẵn sàng gửi dữ liệu sản phẩm!",
                               );
                               controller.isEditing.value = false;
                             } else {
-                              Get.snackbar(
-                                "Lỗi",
-                                "Vui lòng điền đủ và chính xác các thông tin bắt buộc!",
-                                backgroundColor: AppColor.red,
-                                colorText: Colors.white,
-                                duration: const Duration(seconds: 2),
+                              debugPrint(
+                                "Lỗi: Vui lòng điền đủ và chính xác các thông tin bắt buộc!",
                               );
                             }
                           },
