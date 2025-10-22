@@ -9,7 +9,8 @@ class UserManagement extends StatelessWidget {
 
   final controller = Get.put(UserManagementController());
 
-  Widget _buildStaticUserCard({
+  Widget _buildUserCard({
+    required String uuid,
     required String name,
     required String email,
     required String phone,
@@ -41,6 +42,7 @@ class UserManagement extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // Avatar
               Container(
                 width: 60,
                 height: 60,
@@ -57,9 +59,9 @@ class UserManagement extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(width: 15),
 
+              // Thông tin người dùng
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,112 +73,93 @@ class UserManagement extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       email,
                       style: const TextStyle(color: Colors.grey, fontSize: 14),
-                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Text(
-                          "SĐT: ",
-                          style: TextStyle(color: Colors.grey, fontSize: 14),
-                        ),
-                        Text(
-                          phone,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      "SĐT: $phone",
+                      style: const TextStyle(color: Colors.black, fontSize: 14),
                     ),
                     const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Text(
-                          "Vai trò: ",
-                          style: TextStyle(color: Colors.grey, fontSize: 14),
-                        ),
-                        Text(
-                          role,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      "Vai trò: $role",
+                      style: const TextStyle(color: Colors.black, fontSize: 14),
                     ),
                     const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Text(
-                          "Trạng thái: ",
-                          style: TextStyle(color: Colors.grey, fontSize: 14),
-                        ),
-                        Text(
-                          statusText,
-                          style: TextStyle(
-                            color: statusColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      "Trạng thái: $statusText",
+                      style: TextStyle(
+                        color: statusColor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(width: 10),
-
+              // Menu hành động
               PopupMenuButton<String>(
-                icon: Icon(
-                  Icons.more_horiz_rounded,
-                  color: AppColor.grey,
-                  size: 24,
-                ),
-                onSelected: (String result) {
+                icon: Icon(Icons.more_horiz_rounded, color: AppColor.grey),
+                onSelected: (String result) async {
                   if (result == 'role') {
-                    controller.changeUserRole(name);
+                    await controller.changeUserRole(uuid);
                   } else if (result == 'toggle') {
-                    controller.toggleUserActivation(name, isActive);
+                    if (isActive) {
+                      CustomDialog.show(
+                        context: context,
+                        color: Colors.red,
+                        title: "Vô hiệu hóa người dùng",
+                        content:
+                            "Bạn có muốn vô hiệu hóa người dùng này không?",
+                        onPressed: () async {
+                          await controller.deactivateUser(uuid);
+                        },
+                      );
+                    } else {
+                      CustomDialog.show(
+                        context: context,
+                        color: Colors.green,
+                        title: "Kích hoạt người dùng",
+                        content: "Bạn có muốn kích hoạt người dùng này không?",
+                        onPressed: () async {
+                          await controller.activateUser(uuid);
+                        },
+                      );
+                    }
                   } else if (result == 'delete') {
-                    controller.deleteUser(name);
+                    CustomDialog.show(
+                      context: context,
+                      color: AppColor.red,
+                      title: "Xóa người dùng",
+                      content: "Bạn có muốn xóa người dùng này không?",
+                      onPressed: () async {
+                        await controller.deleteUser(uuid);
+                      },
+                    );
                   }
                 },
+
                 itemBuilder:
                     (BuildContext context) => <PopupMenuEntry<String>>[
-                      // 1. Đổi vai trò (Change Role)
-                      PopupMenuItem<String>(
+                      const PopupMenuItem(
                         value: 'role',
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.edit_note_rounded,
                               color: Colors.blueGrey,
-                              size: 20,
                             ),
-                            const SizedBox(width: 12),
-                            Text(
-                              'Đổi vai trò',
-                              style: TextStyle(
-                                color: AppColor.text1,
-                                fontSize: 14,
-                              ),
-                            ),
+                            SizedBox(width: 12),
+                            Text('Đổi vai trò'),
                           ],
                         ),
                       ),
-
-                      // 2. Kích hoạt / Vô hiệu hóa (Toggle)
-                      PopupMenuItem<String>(
+                      PopupMenuItem(
                         value: 'toggle',
                         child: Row(
                           children: [
@@ -185,53 +168,26 @@ class UserManagement extends StatelessWidget {
                                   ? Icons.toggle_off_rounded
                                   : Icons.toggle_on_rounded,
                               color: isActive ? AppColor.red : Colors.green,
-                              size: 20,
                             ),
                             const SizedBox(width: 12),
-                            Text(
-                              toggleActionText,
-                              style: TextStyle(
-                                color: isActive ? AppColor.red : Colors.green,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+                            Text(toggleActionText),
                           ],
                         ),
                       ),
-
-                      // 3. Xóa user (Delete)
-                      PopupMenuItem<String>(
+                      PopupMenuItem(
                         value: 'delete',
-                        child: GestureDetector(
-                          onTap: () {
-                            CustomDialog.show(
-                              context: context,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.delete_outline_rounded,
                               color: AppColor.red,
-                              title: "Xóa người dùng",
-                              content:
-                                  "Bạn có chắc muốn xóa người dùng này không?",
-                              onPressed: () {},
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.delete_outline_rounded,
-                                color: AppColor.red,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                'Xóa user',
-                                style: TextStyle(
-                                  color: AppColor.red,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              'Xóa người dùng',
+                              style: TextStyle(color: AppColor.red),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -239,7 +195,7 @@ class UserManagement extends StatelessWidget {
             ],
           ),
         ),
-      ),
+      ).paddingOnly(top: 8),
     );
   }
 
@@ -248,52 +204,46 @@ class UserManagement extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.background,
       appBar: AppBar(
-        foregroundColor: AppColor.white,
         backgroundColor: AppColor.primary,
-        elevation: 0,
         title: const Text(
           "Quản lý người dùng",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Get.back(),
         ),
       ),
-      body: ListView(
-        children: [
-          const SizedBox(height: 12),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          _buildStaticUserCard(
-            name: "Phạm Văn Đông",
-            email: "dong@admin.com",
-            phone: "0123456789",
-            role: "ADMIN",
-            isActive: true,
-            context: context,
+        if (controller.userList.isEmpty) {
+          return const Center(child: Text("Không có người dùng nào"));
+        }
+
+        return RefreshIndicator(
+          color: AppColor.primary,
+          onRefresh: controller.refreshUserList,
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: controller.userList.length,
+            itemBuilder: (context, index) {
+              final user = controller.userList[index];
+              return _buildUserCard(
+                uuid: user.uuid ?? '',
+                name: user.name ?? 'Không tên',
+                email: user.email ?? 'Không có email',
+                phone: user.phone ?? 'Không có số',
+                role: user.permissionName ?? 'Không xác định',
+                isActive: user.status == 1,
+                context: context,
+              );
+            },
           ),
-
-          _buildStaticUserCard(
-            name: "Nguyễn Thị A",
-            email: "nguyenthiA@user.com",
-            phone: "0987654321",
-            role: "USER",
-            isActive: true,
-            context: context,
-          ),
-
-          _buildStaticUserCard(
-            name: "Trần Văn B",
-            email: "tranvanb@user.com",
-            phone: "0333444555",
-            role: "USER",
-            isActive: false,
-            context: context,
-          ),
-
-          const SizedBox(height: 80),
-        ],
-      ),
+        );
+      }),
     );
   }
 }
