@@ -207,7 +207,7 @@ class UserManagement extends StatelessWidget {
         backgroundColor: AppColor.primary,
         title: const Text(
           "Quản lý người dùng",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
