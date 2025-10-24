@@ -36,16 +36,16 @@ class CreateVoucher extends StatelessWidget {
               _labelForm(label: "Mã giảm giá", isRequired: true),
               const SizedBox(height: 8),
               TextFormField(
+                controller: controller.codeController,
                 decoration: _customInputDecoration(
                   hintText: "Nhập mã giảm giá",
                   prefixIcon: Icons.card_giftcard,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng nhập mã giảm giá';
-                  }
-                  return null;
-                },
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Vui lòng nhập mã giảm giá'
+                            : null,
               ),
 
               const SizedBox(height: 20),
@@ -53,6 +53,7 @@ class CreateVoucher extends StatelessWidget {
               _labelForm(label: "Mức giảm giá (%)", isRequired: true),
               const SizedBox(height: 8),
               TextFormField(
+                controller: controller.discountController,
                 keyboardType: TextInputType.number,
                 decoration: _customInputDecoration(
                   hintText: "Nhập mức giảm giá",
@@ -75,12 +76,42 @@ class CreateVoucher extends StatelessWidget {
               _labelForm(label: "Chi tiết mã giảm giá"),
               const SizedBox(height: 8),
               TextFormField(
+                controller: controller.descriptionController,
                 maxLines: 4,
                 decoration: _customInputDecoration(
                   hintText: "Nhập chi tiết mã giảm giá",
                   prefixIcon: Icons.description,
-                  iconColor: AppColor.primary,
                 ),
+              ),
+
+              const SizedBox(height: 20),
+
+              _labelForm(label: "Ngày bắt đầu", isRequired: true),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: controller.startDateController,
+                readOnly: true,
+                decoration: _customInputDecoration(
+                  hintText: "Chọn ngày bắt đầu",
+                  prefixIcon: Icons.calendar_today,
+                ),
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2020),
+                    lastDate: DateTime(2100),
+                  );
+                  if (pickedDate != null) {
+                    controller.startDateController.text =
+                        pickedDate.toString().split(' ')[0];
+                  }
+                },
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Vui lòng chọn ngày bắt đầu'
+                            : null,
               ),
 
               const SizedBox(height: 20),
@@ -88,10 +119,11 @@ class CreateVoucher extends StatelessWidget {
               _labelForm(label: "Ngày hết hạn", isRequired: true),
               const SizedBox(height: 8),
               TextFormField(
+                controller: controller.endDateController,
                 readOnly: true,
                 decoration: _customInputDecoration(
                   hintText: "Chọn ngày hết hạn",
-                  prefixIcon: Icons.calendar_today,
+                  prefixIcon: Icons.calendar_month,
                 ),
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
@@ -101,98 +133,102 @@ class CreateVoucher extends StatelessWidget {
                     lastDate: DateTime(2100),
                   );
                   if (pickedDate != null) {
-                    // Xử lý ngày được chọn
+                    controller.endDateController.text =
+                        pickedDate.toString().split(' ')[0];
                   }
                 },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng chọn ngày hết hạn';
-                  }
-                  return null;
-                },
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Vui lòng chọn ngày hết hạn'
+                            : null,
               ),
 
               const SizedBox(height: 20),
 
-              _labelForm(label: "Điều kiện áp dụng", isRequired: true),
+              _labelForm(label: "Giá trị đơn hàng tối thiểu", isRequired: true),
               const SizedBox(height: 8),
               TextFormField(
+                controller: controller.minOrderValueController,
                 keyboardType: TextInputType.number,
                 decoration: _customInputDecoration(
-                  hintText: "Nhập điều kiện áp dụng",
+                  hintText: "Nhập giá trị đơn hàng tối thiểu",
                   prefixIcon: Icons.rule,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng nhập điều kiện áp dụng';
-                  }
-                  final number = num.tryParse(value);
-                  if (number == null || number < 0) {
-                    return 'Vui lòng nhập điều kiện áp dụng hợp lệ';
-                  }
-                  return null;
-                },
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Vui lòng nhập giá trị tối thiểu'
+                            : null,
               ),
 
               const SizedBox(height: 20),
 
-              _labelForm(label: "Số lượng", isRequired: true),
+              _labelForm(label: "Số lượng sử dụng", isRequired: true),
               const SizedBox(height: 8),
               TextFormField(
+                controller: controller.usageLimitController,
                 keyboardType: TextInputType.number,
                 decoration: _customInputDecoration(
-                  hintText: "Nhập số lượng",
+                  hintText: "Nhập số lượng giới hạn sử dụng",
                   prefixIcon: Icons.confirmation_number,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng nhập số lượng';
-                  }
-                  final number = int.tryParse(value);
-                  if (number == null || number <= 0) {
-                    return 'Vui lòng nhập số lượng hợp lệ';
-                  }
-                  return null;
-                },
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Vui lòng nhập số lượng'
+                            : null,
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(10),
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        width: double.infinity,
-        height: 70,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColor.primary,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
+      bottomNavigationBar: Obx(() {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(10),
+                blurRadius: 10,
+                spreadRadius: 2,
+                offset: const Offset(0, -4),
+              ),
+            ],
           ),
-          child: const Text(
-            'Thêm mã giảm giá',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
+          width: double.infinity,
+          height: 70,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: ElevatedButton(
+            onPressed:
+                controller.isLoading.value
+                    ? null
+                    : () async {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        await controller.createVoucher();
+                      }
+                    },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColor.primary,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
             ),
+            child:
+                controller.isLoading.value
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                      'Thêm mã giảm giá',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
           ),
-        ),
-      ).paddingOnly(bottom: 20),
+        ).paddingOnly(bottom: 20);
+      }),
     );
   }
 
