@@ -55,245 +55,241 @@ class VoucherManagement extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final voucher = controller.vouchers[index];
 
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withAlpha(50),
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // --- Mã và trạng thái ---
-                              Row(
-                                children: [
-                                  Text(
-                                    voucher.code ?? "--",
-                                    style: TextStyle(
-                                      color: AppColor.primary,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  Text(
-                                    (voucher.isActive ?? 0) == 1
-                                        ? "Đang hoạt động"
-                                        : "Hết hạn",
-                                    style: TextStyle(
-                                      color:
-                                          (voucher.isActive ?? 0) == 1
-                                              ? Colors.green
-                                              : Colors.red,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 4),
-
-                              // --- Giảm ---
-                              Row(
-                                children: [
-                                  const Text(
-                                    "Giảm: ",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Text(
-                                    (voucher.discountType ?? 0) == 0
-                                        ? "${voucher.discountValue ?? '0'}%"
-                                        : "${voucher.discountValue?.replaceAll('.00', '') ?? '0'} ₫",
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 4),
-
-                              // --- Mô tả ---
-                              Text(
-                                voucher.description ?? "",
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-
-                              const Divider(color: Colors.grey, thickness: 1),
-
-                              // --- Hiệu lực ---
-                              Row(
-                                children: [
-                                  const Text(
-                                    "Hiệu lực: ",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        (voucher.startDate ?? "")
-                                            .split("T")
-                                            .first,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const Text(" - "),
-                                      Text(
-                                        (voucher.endDate ?? "")
-                                            .split("T")
-                                            .first,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-
-                              // --- Điều kiện ---
-                              Row(
-                                children: [
-                                  const Text(
-                                    "Điều kiện: ",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Đơn hàng từ ${voucher.minOrderValue?.replaceAll('.00', '') ?? '0'} ₫",
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // --- Số lượng ---
-                              Row(
-                                children: [
-                                  const Text(
-                                    "Số lượng: ",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Text(
-                                    (voucher.usageLimitPerVoucher ?? 0)
-                                        .toString(),
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // --- Đã sử dụng ---
-                              Row(
-                                children: [
-                                  const Text(
-                                    "Đã sử dụng: ",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Text(
-                                    (voucher.currentUsageCount ?? 0).toString(),
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const Divider(color: Colors.grey, thickness: 1),
-
-                              // --- Nút sửa / xóa ---
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      Get.toNamed(
-                                        Routes.editVoucher,
-                                        arguments: voucher,
-                                      );
-                                    },
-                                    icon: Icon(
-                                      Icons.edit,
-                                      color: AppColor.primary,
-                                    ),
-                                    tooltip: 'Chỉnh sửa',
-                                  ),
-                                  const SizedBox(width: 8),
-                                  IconButton(
-                                    onPressed: () {
-                                      CustomDialog.show(
-                                        context: context,
-                                        color: Colors.red,
-                                        title: "Xóa mã giảm giá",
-                                        content:
-                                            "Bạn có chắc muốn xóa mã giảm giá này không?",
-                                        onPressed: () {
-                                          controller.deleteVoucher(
-                                            voucher.uuid ?? "",
-                                          );
-                                          Get.back();
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
-                                    tooltip: 'Xóa',
-                                  ),
-                                ],
+                      return GestureDetector(
+                        onTap: () {
+                          Get.toNamed(
+                            Routes.editVoucher,
+                            arguments: {'uuid': controller.vouchers[index].uuid},
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(50),
+                                blurRadius: 6,
+                                offset: const Offset(0, 3),
                               ),
                             ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // --- Mã và trạng thái ---
+                                Row(
+                                  children: [
+                                    Text(
+                                      voucher.code ?? "--",
+                                      style: TextStyle(
+                                        color: AppColor.primary,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      (voucher.isActive ?? 0) == 1
+                                          ? "Đang hoạt động"
+                                          : "Hết hạn",
+                                      style: TextStyle(
+                                        color:
+                                            (voucher.isActive ?? 0) == 1
+                                                ? Colors.green
+                                                : Colors.red,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 4),
+
+                                // --- Giảm ---
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Giảm: ",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    Text(
+                                      (voucher.discountType ?? 0) == 0
+                                          ? "${voucher.discountValue ?? '0'}%"
+                                          : "${voucher.discountValue?.replaceAll('.00', '') ?? '0'} ₫",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 4),
+
+                                // --- Mô tả ---
+                                Text(
+                                  voucher.description ?? "",
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+
+                                const Divider(color: Colors.grey, thickness: 1),
+
+                                // --- Hiệu lực ---
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Hiệu lực: ",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          (voucher.startDate ?? "")
+                                              .split("T")
+                                              .first,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const Text(" - "),
+                                        Text(
+                                          (voucher.endDate ?? "")
+                                              .split("T")
+                                              .first,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+
+                                // --- Điều kiện ---
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Điều kiện: ",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Đơn hàng từ ${voucher.minOrderValue?.replaceAll('.00', '') ?? '0'} ₫",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                // --- Số lượng ---
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Số lượng: ",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    Text(
+                                      (voucher.usageLimitPerVoucher ?? 0)
+                                          .toString(),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                // --- Đã sử dụng ---
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Đã sử dụng: ",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    Text(
+                                      (voucher.currentUsageCount ?? 0)
+                                          .toString(),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                const Divider(color: Colors.grey, thickness: 1),
+
+                                // --- Nút xóa ---
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    const SizedBox(width: 8),
+                                    IconButton(
+                                      onPressed: () {
+                                        CustomDialog.show(
+                                          context: context,
+                                          color: Colors.red,
+                                          title: "Xóa mã giảm giá",
+                                          content:
+                                              "Bạn có chắc muốn xóa mã giảm giá này không?",
+                                          onPressed: () {
+                                            controller.deleteVoucher(
+                                              voucher.uuid ?? "",
+                                            );
+                                            Get.back();
+                                          },
+                                        );
+                                      },
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                      tooltip: 'Xóa',
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
