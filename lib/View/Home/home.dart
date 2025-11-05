@@ -202,6 +202,11 @@ class MenuScreen extends StatelessWidget {
       'route': '/order-management',
     },
     {
+      'icon': Icons.branding_watermark_outlined,
+      'title': 'Quản lý banner',
+      'route': '/banner-management',
+    },
+    {
       'icon': Icons.local_offer_outlined,
       'title': 'Quản lý mã giảm giá',
       'route': '/voucher-management',
