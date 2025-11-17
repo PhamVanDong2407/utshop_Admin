@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:utshopadmin/Component/custom_dialog.dart';
 import 'package:utshopadmin/Controller/Home/home_controller.dart';
 import 'package:utshopadmin/Global/app_color.dart';
-import 'package:utshopadmin/Route/app_page.dart';
 import 'package:utshopadmin/Service/auth.dart';
 
 class Home extends StatelessWidget {
@@ -49,106 +48,133 @@ class MainScreen extends StatelessWidget {
           'Trang chủ Admin',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: AppColor.primary,
         elevation: 2.0,
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications, color: Colors.white),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: () {
-              Get.toNamed(Routes.notify);
+              controller.fetchDashboardStats();
             },
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDashboardCard(
-                    "Tổng doanh thu",
-                    "120.5M VND",
-                    Icons.monetization_on,
-                    Colors.green,
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return Center(
+            child: CircularProgressIndicator(color: AppColor.primary),
+          );
+        }
+        final stats = controller.stats.value;
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildDashboardCard(
+                      "Tổng doanh thu",
+                      controller.currencyFormatter.format(
+                        stats?.totalRevenue ?? 0,
+                      ),
+                      Icons.monetization_on,
+                      Colors.green,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildDashboardCard(
-                    "Tổng đơn hàng",
-                    "32",
-                    Icons.shopping_cart,
-                    Colors.orange,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildDashboardCard(
+                      "Tổng đơn hàng",
+                      controller.decimalFormatter.format(
+                        stats?.totalOrders ?? 0,
+                      ),
+                      Icons.shopping_cart,
+                      Colors.orange,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDashboardCard(
-                    "Đang chuẩn bị",
-                    "1,250",
-                    Icons.checklist_outlined,
-                    Colors.blue,
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildDashboardCard(
+                      "Đang chuẩn bị", // (Pending + Awaiting)
+                      controller.decimalFormatter.format(
+                        stats?.preparingOrders ?? 0,
+                      ),
+                      Icons.checklist_outlined,
+                      Colors.blue,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildDashboardCard(
-                    "Tổng sản phẩm",
-                    "890",
-                    Icons.inventory,
-                    Colors.purple,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildDashboardCard(
+                      "Tổng sản phẩm",
+                      controller.decimalFormatter.format(
+                        stats?.totalProducts ?? 0,
+                      ),
+                      Icons.inventory,
+                      Colors.purple,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDashboardCard(
-                    "Đơn đã bán",
-                    "1,250",
-                    Icons.check_circle,
-                    Colors.green,
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildDashboardCard(
+                      "Đơn đã bán", // (Delivered)
+                      controller.decimalFormatter.format(
+                        stats?.soldOrders ?? 0,
+                      ),
+                      Icons.check_circle,
+                      Colors.green,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildDashboardCard(
-                    "Đang giao",
-                    "890",
-                    Icons.car_repair_outlined,
-                    Colors.brown,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildDashboardCard(
+                      "Đang giao", // (Shipping)
+                      controller.decimalFormatter.format(
+                        stats?.shippingOrders ?? 0,
+                      ),
+                      Icons.local_shipping_outlined, // Sửa icon
+                      Colors.brown,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDashboardCard(
-                    "Đơn hủy",
-                    "1,250",
-                    Icons.cancel,
-                    Colors.red,
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildDashboardCard(
+                      "Đơn hủy", // (Cancelled)
+                      controller.decimalFormatter.format(
+                        stats?.cancelledOrders ?? 0,
+                      ),
+                      Icons.cancel,
+                      Colors.red,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(child: SizedBox.shrink()),
-              ],
-            ),
-            SizedBox(height: 100),
-          ],
-        ),
-      ),
+                  const SizedBox(width: 16),
+                  Expanded(child: SizedBox.shrink()),
+                ],
+              ),
+              SizedBox(height: 100),
+            ],
+          ),
+        );
+      }),
     );
   }
 }
