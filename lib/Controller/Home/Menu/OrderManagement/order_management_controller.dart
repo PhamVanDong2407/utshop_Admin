@@ -56,11 +56,6 @@ class OrderManagementController extends GetxController {
       }
     } catch (e) {
       debugPrint("Error fetching admin orders: $e");
-      Utils.showSnackBar(
-        title: "Lỗi",
-        message: "Đã có lỗi xảy ra: $e",
-        backgroundColor: Colors.red,
-      );
     } finally {
       isLoading(false);
     }

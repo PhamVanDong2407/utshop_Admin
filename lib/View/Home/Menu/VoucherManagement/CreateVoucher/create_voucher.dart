@@ -38,7 +38,7 @@ class CreateVoucher extends StatelessWidget {
               TextFormField(
                 controller: controller.codeController,
                 decoration: _customInputDecoration(
-                  hintText: "Nhập mã giảm giá",
+                  hintText: "Nhập mã giảm giá (VD: SALE50)",
                   prefixIcon: Icons.card_giftcard,
                 ),
                 validator:
@@ -47,32 +47,134 @@ class CreateVoucher extends StatelessWidget {
                             ? 'Vui lòng nhập mã giảm giá'
                             : null,
               ),
-
               const SizedBox(height: 20),
 
-              _labelForm(label: "Mức giảm giá (%)", isRequired: true),
+              // --- PHẦN CHỌN LOẠI GIẢM GIÁ ---
+              _labelForm(label: "Loại giảm giá", isRequired: true),
               const SizedBox(height: 8),
-              TextFormField(
-                controller: controller.discountController,
-                keyboardType: TextInputType.number,
-                decoration: _customInputDecoration(
-                  hintText: "Nhập mức giảm giá",
-                  prefixIcon: Icons.percent,
+              Obx(
+                () => Row(
+                  children: [
+                    Expanded(
+                      child: RadioListTile<int>(
+                        title: const Text("Theo %"),
+                        value: 1,
+                        groupValue: controller.discountType.value,
+                        contentPadding: EdgeInsets.zero,
+                        activeColor: AppColor.primary,
+                        dense: true,
+                        onChanged: (val) {
+                          controller.discountType.value = val!;
+                          controller.discountController.clear();
+                          controller.maxDiscountController.clear();
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: RadioListTile<int>(
+                        title: const Text("Theo tiền (VNĐ)"),
+                        value: 2,
+                        groupValue: controller.discountType.value,
+                        contentPadding: EdgeInsets.zero,
+                        activeColor: AppColor.primary,
+                        dense: true,
+                        onChanged: (val) {
+                          controller.discountType.value = val!;
+                          controller.discountController.clear();
+                          controller.maxDiscountController.clear();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng nhập mức giảm giá';
-                  }
-                  final number = num.tryParse(value);
-                  if (number == null || number <= 0 || number > 100) {
-                    return 'Vui lòng nhập mức giảm giá hợp lệ (0-100)';
-                  }
-                  return null;
-                },
+              ),
+
+              // --------------------------------
+              const SizedBox(height: 10),
+
+              // --- MỨC GIẢM GIÁ (THAY ĐỔI THEO LOẠI) ---
+              Obx(
+                () => _labelForm(
+                  label:
+                      controller.discountType.value == 1
+                          ? "Mức giảm (%)"
+                          : "Số tiền giảm (VNĐ)",
+                  isRequired: true,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Obx(
+                () => TextFormField(
+                  controller: controller.discountController,
+                  keyboardType: TextInputType.number,
+                  decoration: _customInputDecoration(
+                    hintText:
+                        controller.discountType.value == 1
+                            ? "Nhập % giảm (VD: 10, 50)"
+                            : "Nhập số tiền giảm (VD: 50000)",
+                    prefixIcon:
+                        controller.discountType.value == 1
+                            ? Icons.percent
+                            : Icons.attach_money,
+                    suffixText:
+                        controller.discountType.value == 1 ? "%" : "VNĐ",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng nhập mức giảm';
+                    }
+                    final number = num.tryParse(value);
+                    if (number == null || number <= 0) {
+                      return 'Giá trị phải lớn hơn 0';
+                    }
+                    // Nếu chọn % thì không được quá 100
+                    if (controller.discountType.value == 1 && number > 100) {
+                      return 'Phần trăm không được quá 100%';
+                    }
+                    return null;
+                  },
+                ),
               ),
 
               const SizedBox(height: 20),
 
+              // --- GIẢM TỐI ĐA (CHỈ HIỆN KHI CHỌN %) ---
+              Obx(() {
+                if (controller.discountType.value == 1) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _labelForm(label: "Giảm tối đa (VNĐ)", isRequired: true),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: controller.maxDiscountController,
+                        keyboardType: TextInputType.number,
+                        decoration: _customInputDecoration(
+                          hintText: "VD: 50000 (Giảm 90% nhưng tối đa 50k)",
+                          prefixIcon: Icons.vertical_align_top,
+                          suffixText: "VNĐ",
+                        ),
+                        validator: (value) {
+                          if (controller.discountType.value == 1) {
+                            if (value == null || value.isEmpty) {
+                              return 'Vui lòng nhập mức giảm tối đa';
+                            }
+                            final number = num.tryParse(value);
+                            if (number == null || number <= 0) {
+                              return 'Giá trị phải lớn hơn 0';
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink(); // Ẩn đi nếu chọn tiền
+              }),
+
+              // ------------------------------------------
               _labelForm(label: "Chi tiết mã giảm giá"),
               const SizedBox(height: 8),
               TextFormField(
@@ -154,6 +256,7 @@ class CreateVoucher extends StatelessWidget {
                 decoration: _customInputDecoration(
                   hintText: "Nhập giá trị đơn hàng tối thiểu",
                   prefixIcon: Icons.rule,
+                  suffixText: "VNĐ",
                 ),
                 validator:
                     (value) =>
@@ -179,6 +282,8 @@ class CreateVoucher extends StatelessWidget {
                             ? 'Vui lòng nhập số lượng'
                             : null,
               ),
+
+              const SizedBox(height: 50),
             ],
           ),
         ),
@@ -197,8 +302,8 @@ class CreateVoucher extends StatelessWidget {
             ],
           ),
           width: double.infinity,
-          height: 70,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          height: 80,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
           child: ElevatedButton(
             onPressed:
                 controller.isLoading.value
@@ -217,7 +322,14 @@ class CreateVoucher extends StatelessWidget {
             ),
             child:
                 controller.isLoading.value
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
                     : const Text(
                       'Thêm mã giảm giá',
                       style: TextStyle(
@@ -227,15 +339,17 @@ class CreateVoucher extends StatelessWidget {
                       ),
                     ),
           ),
-        ).paddingOnly(bottom: 20);
+        );
       }),
     );
   }
+
 
   InputDecoration _customInputDecoration({
     required String hintText,
     required IconData prefixIcon,
     Color? iconColor,
+    String? suffixText,
   }) {
     final OutlineInputBorder baseBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
@@ -264,6 +378,11 @@ class CreateVoucher extends StatelessWidget {
       ),
       contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       prefixIcon: Icon(prefixIcon, color: iconColor ?? AppColor.grey, size: 20),
+      suffixText: suffixText,
+      suffixStyle: TextStyle(
+        color: AppColor.text1,
+        fontWeight: FontWeight.bold,
+      ),
       filled: true,
       fillColor: Colors.white,
     );
